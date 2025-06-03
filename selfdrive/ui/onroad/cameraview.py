@@ -60,6 +60,7 @@ class CameraView:
     self.client = VisionIpcClient(name, stream_type, False)
     self._name = name
     self._stream_type = stream_type
+    self.available_streams: list[VisionStreamType] = []
 
     self._texture_needs_update = True
     self.last_connection_attempt: float = 0.0
@@ -214,6 +215,7 @@ class CameraView:
   def _ensure_connection(self) -> bool:
     if not self.client.is_connected():
       self.frame = None
+      self.available_streams.clear()
 
       # Throttle connection attempts
       current_time = rl.get_time()
@@ -225,6 +227,8 @@ class CameraView:
         return False
 
       cloudlog.debug(f"Connected to {self._name} stream: {self._stream_type}, buffers: {self.client.num_buffers}")
+
+      self.available_streams = self.client.available_streams(self._name, block=False)
       self._clear_textures()
 
       if not TICI:
