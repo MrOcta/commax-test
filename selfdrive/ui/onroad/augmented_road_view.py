@@ -1,6 +1,6 @@
 import numpy as np
 import pyray as rl
-
+from collections.abc import Callable
 from cereal import log
 from msgq.visionipc import VisionStreamType
 from openpilot.selfdrive.ui.ui_state import ui_state, UIStatus, UI_BORDER_SIZE
@@ -42,6 +42,9 @@ class AugmentedRoadView(CameraView):
     self._hud_renderer = HudRenderer()
     self.alert_renderer = AlertRenderer()
     self.driver_state_renderer = DriverStateRenderer()
+
+    # Callbacks
+    self.on_click: Callable | None = None
 
   def render(self, rect):
     # Only render when system is started to avoid invalid data access
@@ -85,6 +88,12 @@ class AugmentedRoadView(CameraView):
 
     # End clipping region
     rl.end_scissor_mode()
+
+    # Handle click events if no HUD interaction occurred
+    if not self._hud_renderer.handle_mouse_event():
+      if self.on_click and rl.is_mouse_button_pressed(rl.MouseButton.MOUSE_BUTTON_LEFT):
+        if rl.check_collision_point_rec(rl.get_mouse_position(), self._content_rect):
+          self.on_click()
 
   def _draw_border(self, rect: rl.Rectangle):
     border_color = BORDER_COLORS.get(ui_state.status, BORDER_COLORS[UIStatus.DISENGAGED])
