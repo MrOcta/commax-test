@@ -5,6 +5,7 @@ from collections.abc import Callable
 from openpilot.common.params import Params
 from openpilot.system.ui.lib.application import gui_app, FontWeight
 from openpilot.system.ui.lib.label import gui_text_box
+from openpilot.selfdrive.ui.layouts.network import NetworkLayout
 
 # Import individual panels
 
@@ -56,7 +57,7 @@ class SettingsLayout:
       PanelType.TOGGLES: PanelInfo("Toggles", None, rl.Rectangle(0, 0, 0, 0)),
       PanelType.SOFTWARE: PanelInfo("Software", None, rl.Rectangle(0, 0, 0, 0)),
       PanelType.FIREHOSE: PanelInfo("Firehose", None, rl.Rectangle(0, 0, 0, 0)),
-      PanelType.NETWORK: PanelInfo("Network", None, rl.Rectangle(0, 0, 0, 0)),
+      PanelType.NETWORK: PanelInfo("Network", NetworkLayout(), rl.Rectangle(0, 0, 0, 0)),
       PanelType.DEVELOPER: PanelInfo("Developer", None, rl.Rectangle(0, 0, 0, 0)),
     }
 
@@ -132,14 +133,18 @@ class SettingsLayout:
   def _draw_current_panel(self, rect: rl.Rectangle):
     content_rect = rl.Rectangle(rect.x + PANEL_MARGIN, rect.y + 25, rect.width - (PANEL_MARGIN * 2), rect.height - 50)
     rl.draw_rectangle_rounded(content_rect, 0.03, 30, PANEL_COLOR)
-    gui_text_box(
-      content_rect,
-      f"Demo {self._panels[self._current_panel].name} Panel",
-      font_size=170,
-      color=rl.WHITE,
-      alignment=rl.GuiTextAlignment.TEXT_ALIGN_CENTER,
-      alignment_vertical=rl.GuiTextAlignmentVertical.TEXT_ALIGN_MIDDLE,
-    )
+    if self._panels[self._current_panel].instance:
+      # Render the current panel instance
+      self._panels[self._current_panel].instance.render(content_rect)
+    else:
+      gui_text_box(
+        content_rect,
+        f"Demo {self._panels[self._current_panel].name} Panel",
+        font_size=170,
+        color=rl.WHITE,
+        alignment=rl.GuiTextAlignment.TEXT_ALIGN_CENTER,
+        alignment_vertical=rl.GuiTextAlignmentVertical.TEXT_ALIGN_MIDDLE,
+      )
 
   def handle_mouse_release(self, mouse_pos: rl.Vector2) -> bool:
     # Check close button
