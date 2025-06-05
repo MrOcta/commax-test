@@ -15,8 +15,8 @@ from openpilot.system import micd
 
 SAMPLE_RATE = 48000
 SAMPLE_BUFFER = 4096 # (approx 100ms)
-MAX_VOLUME = 1.0
-MIN_VOLUME = 0.1
+MAX_VOLUME = 0.1
+MIN_VOLUME = 0.0
 SELFDRIVE_STATE_TIMEOUT = 5 # 5 seconds
 FILTER_DT = 1. / (micd.SAMPLE_RATE / micd.FFT_SAMPLES)
 
@@ -28,16 +28,16 @@ AudibleAlert = car.CarControl.HUDControl.AudibleAlert
 
 sound_list: dict[int, tuple[str, int | None, float]] = {
   # AudibleAlert, file name, play count (none for infinite)
-  AudibleAlert.engage: ("engage.wav", 1, MAX_VOLUME),
-  AudibleAlert.disengage: ("disengage.wav", 1, MAX_VOLUME),
-  AudibleAlert.refuse: ("refuse.wav", 1, MAX_VOLUME),
+  AudibleAlert.engage: ("engage.wav", 1, MIN_VOLUME),
+  AudibleAlert.disengage: ("disengage.wav", 1, MIN_VOLUME),
+  AudibleAlert.refuse: ("refuse.wav", 1, MIN_VOLUME),
 
-  AudibleAlert.prompt: ("prompt.wav", 1, MAX_VOLUME),
-  AudibleAlert.promptRepeat: ("prompt.wav", None, MAX_VOLUME),
-  AudibleAlert.promptDistracted: ("prompt_distracted.wav", None, MAX_VOLUME),
+  AudibleAlert.prompt: ("prompt.wav", 1, MIN_VOLUME),
+  AudibleAlert.promptRepeat: ("prompt.wav", None, MIN_VOLUME),
+  AudibleAlert.promptDistracted: ("prompt_distracted.wav", None, MIN_VOLUME),
 
-  AudibleAlert.warningSoft: ("warning_soft.wav", None, MAX_VOLUME),
-  AudibleAlert.warningImmediate: ("warning_immediate.wav", None, MAX_VOLUME),
+  AudibleAlert.warningSoft: ("warning_soft.wav", None, MIN_VOLUME),
+  AudibleAlert.warningImmediate: ("warning_immediate.wav", None, MIN_VOLUME),
 }
 
 def check_selfdrive_timeout_alert(sm):
