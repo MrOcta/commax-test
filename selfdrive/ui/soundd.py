@@ -15,8 +15,8 @@ from openpilot.system import micd
 
 SAMPLE_RATE = 48000
 SAMPLE_BUFFER = 4096 # (approx 100ms)
-MAX_VOLUME = 1.0
-MIN_VOLUME = 0.1
+MAX_VOLUME = 0.05
+MIN_VOLUME = 0.01
 SELFDRIVE_STATE_TIMEOUT = 5 # 5 seconds
 FILTER_DT = 1. / (micd.SAMPLE_RATE / micd.FFT_SAMPLES)
 
